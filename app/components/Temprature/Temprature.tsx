@@ -14,11 +14,10 @@ import moment from "moment";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function Temperature() {
+  const { forecast } = useGlobalContext();
+  const { main, timezone, name, weather } = forecast;
   const [localTime, setLocalTime] = useState<string>("");
   const [currentDay, setCurrentDay] = useState<string>("");
-  const { forecast } = useGlobalContext();
-
-  const { main, timezone, name, weather } = forecast;
   useEffect(() => {
     // upadte time every second
     const interval = setInterval(() => {
@@ -35,6 +34,7 @@ function Temperature() {
     // clear interval
     return () => clearInterval(interval);
   }, [timezone]);
+
   if (!forecast || !weather) {
     return <Skeleton className="h-[12rem] w-full" />;
   }
