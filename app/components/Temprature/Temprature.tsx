@@ -19,10 +19,6 @@ function Temperature() {
   const { forecast } = useGlobalContext();
 
   const { main, timezone, name, weather } = forecast;
-
-  if (!forecast || !weather) {
-    return <Skeleton className="h-[12rem] w-full" />;
-  }
   useEffect(() => {
     // upadte time every second
     const interval = setInterval(() => {
@@ -39,6 +35,9 @@ function Temperature() {
     // clear interval
     return () => clearInterval(interval);
   }, [timezone]);
+  if (!forecast || !weather) {
+    return <Skeleton className="h-[12rem] w-full" />;
+  }
 
   const temp = kelvinToCelsius(main?.temp);
   const minTemp = kelvinToCelsius(main?.temp_min);
