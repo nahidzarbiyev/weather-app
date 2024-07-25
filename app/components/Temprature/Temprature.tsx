@@ -14,6 +14,8 @@ import moment from "moment";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function Temperature() {
+  const [localTime, setLocalTime] = useState<string>("");
+  const [currentDay, setCurrentDay] = useState<string>("");
   const { forecast } = useGlobalContext();
 
   const { main, timezone, name, weather } = forecast;
@@ -21,14 +23,28 @@ function Temperature() {
   if (!forecast || !weather) {
     return <Skeleton className="h-[12rem] w-full" />;
   }
+  useEffect(() => {
+    // upadte time every second
+    const interval = setInterval(() => {
+      const localMoment = moment().utcOffset(timezone / 60);
+      // custom format: 24 hour format
+      const formatedTime = localMoment.format("HH:mm:ss");
+      // day of the week
+      const day = localMoment.format("dddd");
+
+      setLocalTime(formatedTime);
+      setCurrentDay(day);
+    }, 1000);
+
+    // clear interval
+    return () => clearInterval(interval);
+  }, [timezone]);
 
   const temp = kelvinToCelsius(main?.temp);
   const minTemp = kelvinToCelsius(main?.temp_min);
   const maxTemp = kelvinToCelsius(main?.temp_max);
 
   // State
-  const [localTime, setLocalTime] = useState<string>("");
-  const [currentDay, setCurrentDay] = useState<string>("");
 
   const { main: weatherMain, description } = weather[0];
 
@@ -50,22 +66,6 @@ function Temperature() {
   };
 
   // Live time update
-  useEffect(() => {
-    // upadte time every second
-    const interval = setInterval(() => {
-      const localMoment = moment().utcOffset(timezone / 60);
-      // custom format: 24 hour format
-      const formatedTime = localMoment.format("HH:mm:ss");
-      // day of the week
-      const day = localMoment.format("dddd");
-
-      setLocalTime(formatedTime);
-      setCurrentDay(day);
-    }, 1000);
-
-    // clear interval
-    return () => clearInterval(interval);
-  }, [timezone]);
 
   return (
     <div
